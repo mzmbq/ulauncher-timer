@@ -1,0 +1,15 @@
+{
+  "required_api_version": "3",
+  "name": "Timer extension",
+  "description": "Set timers",
+  "developer_name": "mzmbq",
+  "icon": "images/icon.png",
+  "preferences": [
+    {
+      "id": "timer_kw",
+      "type": "keyword",
+      "name": "Set Timer",
+      "default_value": "ti"
+    }
+  ]
+}
