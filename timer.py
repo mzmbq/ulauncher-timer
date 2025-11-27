@@ -1,11 +1,18 @@
+import json
 import logging
 import subprocess as s
 import threading
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from urllib import request
-from urllib.parse import quote
+import requests
+
+
+logging.basicConfig(
+    filename='/home/user/dev/ulauncher-better-timer/ulauncher-better-timer.log',
+    level=logging.DEBUG,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +24,44 @@ class Timer:
     duration: timedelta
     t_timer: threading.Timer
     message: str = ""
+
+
+def send_request(urls: str, message: str):
+    """Send HTTP requests based on the provided URLs and methods. Throws exception on failure."""
+    url_list = urls.splitlines()
+    for url in url_list:
+        url = url.strip()
+        if not url or url[0] == "#":
+            continue
+
+        method, url_part = url.split(" ", 1)
+
+        match method:
+            case "GET":
+                req_url = url_part.replace("{message}", message)
+                logger.info(f"Sending GET request to {req_url}")
+                response = requests.get(req_url, timeout=10)
+                logger.info(f"GET response: {response.status_code}")
+                response.raise_for_status()
+
+            case "POST":
+                url_str, body_template = url_part.split("||", 1)
+                body_str = body_template.strip().replace(
+                    "{message}", json.dumps(message))
+                logger.info(f"POST body: {body_str}")
+
+                response = requests.post(
+                    url_str.strip(),
+                    data=body_str,
+                    headers={'Content-Type': 'application/json'},
+                    timeout=10
+                )
+                logger.info(f"POST response: {response.status_code}")
+                response.raise_for_status()
+
+            case _:
+                logger.error(f"Unsupported method: {method}")
+                raise ValueError(f"Unsupported method: {method}")
 
 
 class TimerManager:
@@ -48,10 +93,12 @@ class TimerManager:
                 pass
 
         if self.notification_url:
-            req_url = self.notification_url.replace(
-                "{message}", quote(msg))
-            logger.info(f"Sending request to {req_url}")
-            request.urlopen(req_url)
+            try:
+                send_request(self.notification_url, msg)
+            except Exception as e:
+                logger.error(f"Failed to send notification: {e}")
+                s.call(["notify-send", "Timer Notification Error",
+                       f"Failed to send notification: {e}"])
 
     def add_timer(self, duration: timedelta, message: str):
         scheduled_time = datetime.now() + duration
