@@ -1,30 +1,20 @@
 import logging
 import re
-from datetime import timedelta, datetime
+from datetime import datetime, timedelta
 
 from ulauncher.api.client.EventListener import EventListener
 from ulauncher.api.client.Extension import Extension
-
 from ulauncher.api.shared.action.ExtensionCustomAction import ExtensionCustomAction
 from ulauncher.api.shared.event import BaseEvent, ItemEnterEvent, KeywordQueryEvent
 from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
 
-from timer import Timer, TimerManager
+from timer import TimerManager
 
-# logger = logging.getLogger(__name__)
-
-# log to file
-logging.basicConfig(
-    filename='/home/user/dev/ulauncher-better-timer/ulauncher-better-timer.log',
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
 logger = logging.getLogger(__name__)
 
 
 def parse_duration(s: str) -> timedelta | None:
     """Parse duration from strings like '1h 20m 30s' or '20m30s' or '45s'"""
-    # TODO: improve or find a better approach
     pattern = r"((?P<hours>\d?)\s?h)?\s?((?P<minutes>\d+)\s?m)?\s?((?P<seconds>\d+)\s?s)?"
     match = re.match(pattern, s)
     if match is None:
@@ -60,7 +50,11 @@ class TimerExtension(Extension):
         self.subscribe(KeywordQueryEvent, KeywordQueryEventListener())
         self.subscribe(ItemEnterEvent, ItemEnterEventListener())
 
-        self.timer_manager = TimerManager()
+        self.timer_manager = TimerManager(
+            notification_type=self.preferences.get(
+                "notification_type", "no-send"),
+            notification_url=self.preferences.get("notification_url", ""),
+        )
 
     def active_timers(self) -> list[ExtensionResultItem]:
         timers = []

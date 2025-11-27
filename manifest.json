@@ -1,6 +1,6 @@
 {
   "required_api_version": "3",
-  "name": "Timer extension",
+  "name": "Timer",
   "description": "Set timers",
   "developer_name": "mzmbq",
   "icon": "images/icon.png",
@@ -10,6 +10,33 @@
       "type": "keyword",
       "name": "Set Timer",
       "default_value": "ti"
+    },
+    {
+      "id": "notification_type",
+      "type": "select",
+      "name": "Desktop notification",
+      "options": [
+        {
+          "text": "Send with sound",
+          "value": "sound"
+        },
+        {
+          "text": "Send silent",
+          "value": "silent"
+        },
+        {
+          "text": "Do not send",
+          "value": "off"
+        }
+      ],
+      "default_value": "send-sound"
+    },
+    {
+      "id": "notification_url",
+      "type": "text",
+      "name": "The GET request will be sent to this URL when the timer ends",
+      "description": "{message} will be replaced with the timer message",
+      "default_value": ""
     }
   ]
 }
