@@ -45,7 +45,7 @@ POST <url> || <body>
 3. Replace `<WEBHOOK_ID>` and `<TOKEN>` with your values:
 
 ```
-POST https://discord.com/api/webhooks/<WEBHOOK_ID>/<TOKEN> || {"content": "{message}"}
+POST https://discord.com/api/webhooks/<WEBHOOK_ID>/<TOKEN> || {"content": {message}}
 ```
 
 ### Example: Telegram Notifications
