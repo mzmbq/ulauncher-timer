@@ -5,14 +5,8 @@ import threading
 import uuid
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+
 import requests
-
-
-logging.basicConfig(
-    filename='/home/user/dev/ulauncher-better-timer/ulauncher-better-timer.log',
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
 
 logger = logging.getLogger(__name__)
 
