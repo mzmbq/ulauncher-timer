@@ -34,7 +34,7 @@
     {
       "id": "notification_url",
       "type": "text",
-      "name": "The GET request will be sent to this URL when the timer ends",
+      "name": "Notification Webhook URLs",
       "description": "{message} will be replaced with the timer message",
       "default_value": ""
     }
